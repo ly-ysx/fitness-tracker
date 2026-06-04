@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>健身饮食分析看板</title>
+<style>
+:root{--bg:#0d1117;--sbg:#161b22;--cbg:#1c2128;--bd:#30363d;--t1:#e6edf3;--t2:#8b949e;--t3:#7d8590;--gr:#3fb950;--bl:#58a6ff;--or:#f0883e;--pu:#bc8cff;--rd:#f85149;--yw:#d29922}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;background:var(--bg);color:var(--t1);line-height:1.6}
+.w{max-width:960px;margin:0 auto;padding:20px}
+.hd{text-align:center;margin-bottom:24px;padding-bottom:18px;border-bottom:1px solid var(--bd)}
+.hd h1{font-size:24px;font-weight:700}
+.hd .sub{font-size:13px;color:var(--t2);margin-top:4px}
+.sr{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:20px}
+.sc{background:var(--cbg);border:1px solid var(--bd);border-radius:10px;padding:10px;text-align:center}
+.sc .i{font-size:20px}.sc .l{font-size:10px;color:var(--t3);margin:3px 0 1px}
+.sc .v{font-size:18px;font-weight:700;font-variant-numeric:tabular-nums}
+.sec{background:var(--sbg);border:1px solid var(--bd);border-radius:10px;margin-bottom:16px;overflow:hidden}
+.sh{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--bd);background:var(--cbg)}
+.sh h2{font-size:13px;font-weight:600}
+.bg{font-size:10px;padding:2px 8px;border-radius:999px;font-weight:500}
+.bgg{background:rgba(63,185,80,.15);color:var(--gr)}.bgb{background:rgba(88,166,255,.15);color:var(--bl)}.bgo{background:rgba(240,136,62,.15);color:var(--or)}.bgy{background:rgba(210,153,34,.15);color:var(--yw)}.bgr{background:rgba(248,81,73,.15);color:var(--rd)}
+.mg{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--bd);border:1px solid var(--bd);border-radius:8px;overflow:hidden;margin:0 16px 12px}
+.mc{padding:10px 12px;background:var(--cbg)}
+.mc+.mc{border-left:3px solid var(--or)}
+.mc .ml{font-size:11px;color:var(--t3);margin-bottom:4px;font-weight:600}
+.mc ul{list-style:none}
+.mc li{font-size:12px;padding:2px 0;display:flex;gap:5px;flex-wrap:wrap}
+.mc li::before{content:"";width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:6px;background:var(--gr)}
+.mc+.mc li::before{background:var(--or)}
+.sl{display:flex;flex-wrap:wrap;gap:5px;padding:8px 14px 8px 36px;background:var(--cbg);border-radius:0 0 8px 8px}
+.sp{font-size:11px;padding:2px 7px;background:rgba(88,166,255,.1);border:1px solid rgba(88,166,255,.25);border-radius:4px;color:var(--bl)}
+.mac{font-size:10px;color:var(--t3);margin-left:2px}
+.dw{display:flex;justify-content:center;margin:10px 0}
+.dn{position:relative;width:110px;height:110px}
+.dn svg{transform:rotate(-90deg)}
+.dc{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center}
+.dc .dv{font-size:22px;font-weight:700}.dc .dl{font-size:10px;color:var(--t3)}
+.leg{display:flex;justify-content:center;gap:14px;margin:8px 0}
+.li{display:flex;align-items:center;gap:4px;font-size:11px}
+.ld{width:7px;height:7px;border-radius:50%}
+.nb{margin:0 16px 12px}
+.nb-i{margin-bottom:8px}
+.nb-l{display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px}
+.nb-l .n{color:var(--t2)}.nb-l .v{font-weight:600}
+.nb-b{height:5px;background:var(--cbg);border-radius:3px;overflow:hidden}
+.nb-f{height:100%;border-radius:3px;transition:width .5s}
+.mg2{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:0 16px 12px}
+.mc2{background:var(--cbg);border-radius:5px;padding:8px;text-align:center;border:1px solid var(--bd)}
+.mc2 .mv{font-size:16px;margin-bottom:1px}.mc2 .ml{font-size:10px;color:var(--t3)}.mc2 .ms{font-size:10px;font-weight:600}
+.ok{color:var(--gr)}.wn{color:var(--yw)}.ms{color:var(--rd)}
+.et{width:100%;border-collapse:collapse}
+.et th{font-size:10px;color:var(--t3);text-transform:uppercase;letter-spacing:.5px;padding:5px 8px;text-align:left;border-bottom:1px solid var(--bd);font-weight:600}
+.et td{font-size:12px;padding:5px 8px;border-bottom:1px solid rgba(48,54,61,.3)}
+.et tr:last-child td{border-bottom:none}
+.mus{font-size:10px;color:var(--t3)}
+.vc{display:inline-block;padding:1px 5px;border-radius:3px;font-size:11px;font-weight:600}
+.vh{background:rgba(63,185,80,.15);color:var(--gr)}.vm{background:rgba(240,136,62,.15);color:var(--or)}.vl{background:rgba(210,153,34,.15);color:var(--yw)}
+.mg3{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:0 16px 12px;padding:0}
+.mc3{background:var(--cbg);border-radius:5px;padding:8px;text-align:center;border:1px solid var(--bd)}
+.mc3 .mn{font-size:12px;font-weight:600;color:var(--bl)}.mc3 .ms2{font-size:16px;font-weight:700}.mc3 .ml2{font-size:10px;color:var(--t3)}
+.sr2{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:0 16px 12px;padding:10px;background:var(--cbg);border-radius:8px}
+.sri{text-align:center}.sri .sv{font-size:16px;font-weight:700}.sri .sk{font-size:10px;color:var(--t3);margin-top:2px}
+.trd{display:flex;gap:12px;padding:8px 0;justify-content:center}
+.trc{background:var(--cbg);border-radius:6px;padding:10px 14px;text-align:center;border:1px solid var(--bd);flex:1}
+.trc .tv{font-size:14px;font-weight:700}.trc .tl{font-size:10px;color:var(--t3);margin-top:2px}
+.tps{padding:0 16px 12px}
+.tp{padding:7px 10px;margin-bottom:5px;border-radius:5px;font-size:12px;background:var(--cbg);border-left:3px solid;line-height:1.7}
+.tp.diet{border-color:var(--or)}.tp.train{border-color:var(--bl)}.tp.supp{border-color:var(--pu)}
+.tp strong{font-weight:600;color:var(--t1)}.tp b{color:var(--bl)}
+.ts{text-align:center;font-size:11px;color:var(--t3);margin-top:16px;padding-top:12px;border-top:1px solid var(--bd)}
+@keyframes fU{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.an{animation:fU .3s ease both}
+.dl1{animation-delay:.03s}.dl2{animation-delay:.1s}.dl3{animation-delay:.18s}.dl4{animation-delay:.26s}.dl5{animation-delay:.34s}.dl6{animation-delay:.42s}
+@media(max-width:640px){
+.sr{grid-template-columns:repeat(3,1fr)}.mg{grid-template-columns:1fr}.mg2{grid-template-columns:repeat(2,1fr)}.mg3{grid-template-columns:repeat(2,1fr)}.sr2{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div class="w">
+
+<header class="hd">
+  <h1>健身饮食分析看板</h1>
+  <div class="sub" id="hdinfo"></div>
+  <div id="daynav" style="margin-top:8px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:13px;">
+    <button onclick="switchDay(1)" style="background:var(--cbg);border:1px solid var(--bd);color:var(--t1);padding:2px 10px;border-radius:4px;cursor:pointer;font-size:12px;">&larr; 前一天</button>
+    <span id="daylabel" style="font-weight:600;"></span>
+    <button onclick="switchDay(-1)" style="background:var(--cbg);border:1px solid var(--bd);color:var(--t1);padding:2px 10px;border-radius:4px;cursor:pointer;font-size:12px;">后一天 &rarr;</button>
+  </div>
+</header>
+
+<script id="jsondata" type="application/json">
+{
+  "records": {
+    "2026-06-03": {
+      "breakfast": {
+        "items": ["水煮全蛋 x2", "紫薯 150g", "脱脂奶冲黑咖啡", "菜饼 x1/4", "黄瓜半根"],
+        "supplements": ["Centrum Men x1", "MegaRed辅酶Q10 x1", "亚西亚维生素K2 x1"],
+        "recorded_at": "2026-06-03T14:49:19+08:00"
+      },
+      "lunch": {
+        "items": ["青椒蘑菇炒肉", "炒冬瓜", "紫皮玉米 x1", "紫薯 150g", "乳清蛋白粉 30g"],
+        "recorded_at": "2026-06-03T14:49:19+08:00"
+      },
+      "dinner": {
+        "items": ["减油烤青茄子+蒜末 140g", "卤鸡腿 1个", "杂粮馒头(25Good) 半个", "西瓜 30g"],
+        "recorded_at": "2026-06-03T19:30:00+08:00"
+      },
+      "supplements_night": {
+        "items": ["酪蛋白 1份", "GO Healthy牡蛎精胶囊 x1", "NOW KSM-66南非醉茄胶囊 x1"],
+        "recorded_at": "2026-06-03T21:00:00+08:00"
+      },
+      "exercise": {
+        "activities": [
+          "引体向上 30kgx12x4",
+          "杠铃划船 55kgx15x4",
+          "坐姿划船 75kgx12x3",
+          "直臂下压 45kgx12x3",
+          "面拉 45kgx15x4",
+          "弯举 25kgx12x3",
+          "直立划船 25kgx12x3",
+          "仰卧抬腿 自重 x15x3"
+        ],
+        "recorded_at": "2026-06-03T14:49:19+08:00"
+      }
+    },
+    "2026-06-04": {
+      "breakfast": {
+        "items": ["蜜雪冰城速溶黑咖啡 2g", "水煮全蛋 x2", "去皮黄瓜半根", "蒸紫薯 110g"],
+        "supplements": ["Centrum Men x1", "亚西亚维生素K2 x1", "MegaRed辅酶Q10 x1"],
+        "recorded_at": "2026-06-04T07:00:00+08:00"
+      },
+      "lunch": {
+        "items": ["槐花瘦肉饺子 x27(每个25g)", "带皮卤鸡肉 1.5腿", "羽衣甘蓝粉 3g", "乳清蛋白粉 30g"],
+        "snack": ["即食水果玉米粒 30g(11:00)"],
+        "recorded_at": "2026-06-04T13:50:00+08:00"
+      },
+      "exercise": {
+        "activities": [
+          "游泳 1500m(50mx30趟)",
+          "自由泳 750m(17min13s/493划)",
+          "蛙泳 750m(18min31s/379划)",
+          "游泳心率 151avg/173peak",
+          "游泳消耗 472kcal"
+        ],
+        "notes": "自由泳+蛙泳各750m，配速2min23s/100m，总耗时53min14s，有效35min44s",
+        "recorded_at": "2026-06-04T13:47:00+08:00"
+      }
+    }
+  }
+}
+</script>
+
+<div id="app"></div>
+
+<script>
+// food nutrition: [kcal, protein, fat, carbs]
+var FOOD = {
+  '水煮全蛋':[70,6,5,0.5],'紫薯':[135,2.5,0.3,33],
+  '脱脂奶冲黑咖啡':[72,7,0.2,10],'菜饼':[100,3,3,15],
+  '黄瓜半根':[8,0.3,0.1,1.5],'青椒蘑菇炒肉':[550,37,37,15],
+  '炒冬瓜':[25,0.5,0.2,6],'紫皮玉米':[120,4,1.5,26],
+  '乳清蛋白粉':[120,24,1.5,2],'烤青茄子':[35,1.5,0.3,8],
+  '卤鸡腿':[180,25,8,0],'杂粮馒头':[55,2,0.5,11],
+  '西瓜':[9,0.2,0,2],'槐花瘦肉饺子':[50,3,2,4],
+  '带皮卤鸡肉':[180,23,9,0],'羽衣甘蓝粉':[10,0.5,0.1,2],
+  '即食水果玉米粒':[35,1,0.3,7]
+};
+
+// Ruzhou-local dinner foods: [kcal, protein, fat, carbs, fiber, name_display, category]
+// category: protein, staple, veg, fat, dairy, fruit
+var RUZHOU_FOOD = [
+  [165,31,3.6,0,0,'鸡胸肉 150g (菜市场/超市冰鲜)','protein'],
+  [220,33,10,0,0,'猪瘦肉 100g (超市)','protein'],
+  [150,26,5,0,0,'牛肉 100g (菜市场)','protein'],
+  [140,20,6,2,0,'草鱼/鲤鱼 150g (菜市场活鱼)','protein'],
+  [80,6,3,4,1,'嫩豆腐 200g (菜市场豆腐摊)','protein'],
+  [90,8,5,3,1,'千张/豆皮 100g (菜市场豆腐摊)','protein'],
+  [120,10,8,2,0,'豆腐干 100g (菜市场)','protein'],
+  [80,3,4,7,1,'番茄炒蛋(2蛋1番茄)','protein'],
+  [200,12,10,15,2,'韭菜饺子 10个(超市速冻/手工)','protein'],
+  [180,14,2,30,2,'馒头 2个(约100g)','staple'],
+  [116,2.6,0.3,26,0.5,'米饭 1碗(150g)','staple'],
+  [60,2.5,0.5,12,0.5,'小米粥 1碗(300ml)','staple'],
+  [170,5,3,32,4,'全麦面包 2片(超市)','staple'],
+  [80,3,0.5,17,3,'蒸红薯 1个(150g)','staple'],
+  [130,4,1.5,27,3,'蒸玉米 1根','staple'],
+  [50,1.5,0.2,11,2,'燕麦片 30g(冲调)','staple'],
+  [130,4,7,14,1,'鸡蛋灌饼 1个(早餐摊/超市速冻)','staple'],
+  [180,5,5,30,1,'小油条 2根(早餐摊)','staple'],
+  [15,1,0,3,2,'小青菜/菠菜 200g','veg'],
+  [30,0.3,0.2,7,2,'番茄 1个(150g)','veg'],
+  [30,2,0.3,5,3,'西兰花 150g(超市有售)','veg'],
+  [30,0.3,0.2,6,1,'蘑菇/香菇 150g(菜市场)','veg'],
+  [70,0.5,2,12,3,'红烧茄子 200g','veg'],
+  [18,0.2,0.1,4,1,'凉拌黄瓜 1根','veg'],
+  [50,2,3,6,2,'大烩菜(时蔬+粉条) 200g(汝州特色)','veg'],
+  [50,3,2,5,3,'蒜蓉油麦菜 200g','veg'],
+  [40,0.3,3,3,1,'炒豆芽 200g','veg'],
+  [240,18,15,6,3,'花生米 50g(炒货摊)','fat'],
+  [100,1,7,8,2,'核桃 3个','fat'],
+  [170,1,18,1,1,'芝麻酱 1勺(15g)','fat'],
+  [100,3,1,20,0,'纯牛奶 250ml(超市)','dairy'],
+  [150,5,8,15,0,'酸奶 200g(超市)','dairy'],
+  [80,2,0.5,19,3,'苹果/香蕉 1个','fruit']
+];
+
+var SUPP = {
+  // 美版 Centrum Men 完整覆盖: A,C,D3(1000IU),E,K,B1/B2/B3/B5/B6/生物素/叶酸/B12, Ca(210mg),Fe,Zn(11mg),Se(100mcg),Mg,I,Cr,Mo,Cu,Mn,番茄红素
+  'Centrum Men':['A','C','D','E','K','B1','B2','B3','B5','B6','生物素','叶酸','B12','Ca','Fe','Zn','Se','Mg','I','Cr','Mo','Cu','Mn','番茄红素'],
+  // MegaRed 脉拓 纯辅酶Q10 200mg + 钙50mg，无磷虾油无Omega-3
+  'MegaRed':['辅酶Q10','Ca'],
+  // 亚西亚 维生素K2 50μg
+  'K2':['K2'],
+  // NOW KSM-66 南非醉茄 600mg (≥5% Withanolides) — 适应原草本/皮质醇管理/睡眠
+  'KSM-66':['适应原','皮质醇管理','睡眠支持'],
+  // GO Healthy 牡蛎精+锌: 牡蛎400mg + 锌15mg + 牛磺酸10mg
+  'Oyster':['锌','牛磺酸','牡蛎提取物']
+};
+
+var MUSCLE = {
+  '直立划船':'肩中束','直臂下压':'背阔肌','引体向上':'背阔肌','面拉':'后束',
+  '弯举':'二头','抬腿':'核心','划船':'中上背','下压':'背阔肌'
+};
+
+function matchFood(items){
+  var out = [];
+  // foods where FOOD value is per 100g (need weight/100 scaling)
+  var PER_100G = {'紫薯':1,'烤青茄子':1};
+  items.forEach(function(item){
+    for(var name in FOOD){
+      if(item.indexOf(name) >= 0){
+        var d = FOOD[name];
+        var mult = 1;
+        // try "xN/M" or "×N/M" (fraction)
+        var xf = item.match(/[x×](\d+(?:\.\d+)?)\/(\d+(?:\.\d+)?)/);
+        if(xf){ mult = parseFloat(xf[1]) / parseFloat(xf[2]); }
+        else {
+          // try "xN" or "×N"
+          var xm = item.match(/[x×](\d+(?:\.\d+)?)/);
+          if(xm){ mult = parseFloat(xm[1]); }
+          else {
+            // try "~Ng" or "Ng" (weight-based, only for per-100g foods)
+            var wm = item.match(/(\d+(?:\.\d+)?)\s*g/i);
+            if(wm && PER_100G[name]){ mult = parseFloat(wm[1]) / 100; }
+            // try "≈N" or standalone number before measure word
+            else {
+              var nm = item.match(/≈?\s*(\d+(?:\.\d+)?)\s*(?:个|根|腿|份|粒|片|包|碗|粒|条)/);
+              if(nm){ mult = parseFloat(nm[1]); }
+              // try "半" only if food name itself doesn't already contain "半"
+              else if(item.indexOf('半')>=0 && name.indexOf('半')<0){ mult = 0.5; }
+            }
+          }
+        }
+        out.push({name:name, kcal:Math.round(d[0]*mult), p:Math.round(d[1]*mult*10)/10, f:Math.round(d[2]*mult*10)/10, c:Math.round(d[3]*mult*10)/10, mult:mult});
+        break;
+      }
+    }
+  });
+  return out;
+}
+
+// recommend dinner with balanced protein + staple + veg
+function recommendDinner(needK, needP, needF, needC){
+  if(needK<=0) return {items:[],kcal:0,p:0,f:0,c:0};
+  var picks = [];
+  var tk=0,tp=0,tf=0,tc=0;
+  var used={};
+
+  function pickByCat(cat, maxItems){
+    var pool = RUZHOU_FOOD.filter(function(f){return f[6]==cat;});
+    // for protein: sort by protein density desc; for others: sort by their main macro
+    if(cat=='protein') pool.sort(function(a,b){return b[1]-a[1];});
+    else if(cat=='staple') pool.sort(function(a,b){return b[3]-a[3];}); // carb density
+    else pool.sort(function(a,b){return (b[0]/b[1])-(a[0]/a[1]);});
+
+    var taken = 0;
+    pool.forEach(function(f){
+      if(taken>=maxItems)return;
+      var key = f[5];
+      if(used[key])return;
+      picks.push(f);
+      used[key]=1;
+      tk+=f[0];tp+=f[1];tf+=f[2];tc+=f[3];
+      taken++;
+    });
+  }
+
+  // Phase 1: pick protein main
+  pickByCat('protein',1);
+  // Phase 2: pick staple
+  pickByCat('staple',1);
+  // Phase 3: if still need more protein, add another protein source
+  if(tp<needP*0.6) pickByCat('protein',1);
+  // Phase 4: if need more carbs, add another staple
+  if(tc<needC*0.5) pickByCat('staple',1);
+  // Phase 5: add veg
+  pickByCat('veg',1);
+  // Phase 6: if fat or calories still low, add dairy/fat
+  if(tk<needK*0.6){ pickByCat('dairy',1); }
+  if(tf<needF*0.5){ pickByCat('fat',1); }
+
+  return {items:picks, kcal:Math.round(tk), p:Math.round(tp), f:Math.round(tf), c:Math.round(tc)};
+}
+
+function render(){
+  var el = document.getElementById('jsondata');
+  if(!el){document.getElementById('app').innerHTML='<p>数据错误</p>';return;}
+  var data;
+  try{data=JSON.parse(el.textContent);}catch(e){document.getElementById('app').innerHTML='<p>JSON解析失败</p>';return;}
+  if(!data||!data.records){document.getElementById('app').innerHTML='<p>无数据</p>';return;}
+
+  var recs = data.records;
+  window.recs = recs;
+  var days = Object.keys(recs).sort().reverse();
+  window.days = days;
+  window.dayIdx = 0;
+  var now = new Date();
+  var dnames = ['周日','周一','周二','周三','周四','周五','周六'];
+  document.getElementById('hdinfo').textContent = now.toLocaleDateString('zh-CN')+' '+dnames[now.getDay()]+' | 记录 '+days.length+' 天';
+
+  if(!days.length){document.getElementById('app').innerHTML='<p>暂无记录</p>';return;}
+
+  renderDay(window.dayIdx);
+}
+
+function switchDay(dir){
+  var n = window.dayIdx + dir;
+  if(n<0||n>=window.days.length)return;
+  window.dayIdx = n;
+  renderDay(n);
+}
+
+function renderDay(idx){
+  var recs = window.recs;
+  var days = window.days;
+  var day = days[idx];
+
+  document.getElementById('daylabel').textContent = day + (idx===0?' (最新)':'');
+  var r = recs[day];
+  var b = r.breakfast, l = r.lunch, d = r.dinner, e = r.exercise;
+  var hasB = b && b.items && b.items.length;
+  var hasL = l && l.items && l.items.length;
+  var hasD = d && d.items && d.items.length;
+  var hasE = e && e.activities && e.activities.length;
+  var sups = b && b.supplements ? b.supplements : [];
+  var ns = r.supplements_night && r.supplements_night.items ? r.supplements_night.items : [];
+  var allsups = sups.concat(ns);
+
+  var bf = hasB ? matchFood(b.items) : [];
+  var lf = hasL ? matchFood(l.items) : [];
+  var df = hasD ? matchFood(d.items) : [];
+  // also match snack items if present
+  var sf = [];
+  if(hasL && l.snack && l.snack.length){ sf = matchFood(l.snack); }
+  var all = bf.concat(lf).concat(sf).concat(df);
+  var kcal = 0, prot = 0, fat = 0, carb = 0;
+  all.forEach(function(f){kcal+=f.kcal;prot+=f.p;fat+=f.f;carb+=f.c;});
+  kcal = Math.round(kcal); prot = Math.round(prot); fat = Math.round(fat); carb = Math.round(carb);
+
+  var pC = prot*4, fC = fat*9, cC = carb*4;
+  var tC = pC+fC+cC;
+  var pP = tC ? Math.round(pC/tC*100) : 0;
+  var fP = tC ? Math.round(fC/tC*100) : 0;
+  var cP = tC ? Math.round(cC/tC*100) : 0;
+
+  // micros
+  var fM = {};
+  all.forEach(function(f){
+    var v = ({'水煮全蛋':'A,D,B2,B12','紫薯':'C,E','脱脂奶冲黑咖啡':'B2,B12','菜饼':'K','黄瓜半根':'K,C','青椒蘑菇炒肉':'C,B3,B6','炒冬瓜':'C','紫皮玉米':'B1','乳清蛋白粉':'','烤青茄子':'C,K','卤鸡腿':'B6,B12,K','杂粮馒头':'B1','西瓜':'C','槐花瘦肉饺子':'B3,B6','带皮卤鸡肉':'B6,B12','羽衣甘蓝粉':'K,C','即食水果玉米粒':'B1,C'})[f.name];
+    if(v)v.split(',').forEach(function(x){if(x)fM[x.trim()]=1;});
+    var m = ({'水煮全蛋':'Se,Fe,Zn','紫薯':'K,Mn','脱脂奶冲黑咖啡':'Ca','黄瓜半根':'K','青椒蘑菇炒肉':'Zn,Fe,K','炒冬瓜':'K','紫皮玉米':'Mg','乳清蛋白粉':'Ca','烤青茄子':'K,Mg','卤鸡腿':'Fe,Zn,Se','西瓜':'K','槐花瘦肉饺子':'Fe,Zn,K','带皮卤鸡肉':'Fe,Zn','羽衣甘蓝粉':'Ca,Fe','即食水果玉米粒':'K,Mg'})[f.name];
+    if(m)m.split(',').forEach(function(x){if(x)fM[x.trim()]=1;});
+  });
+  var sM = {};
+  allsups.forEach(function(s){
+    if(s.indexOf('Centrum')>=0)SUPP['Centrum Men'].forEach(function(x){sM[x]=1;});
+    if(s.indexOf('Q10')>=0||s.indexOf('MegaRed')>=0){sM['辅酶Q10']=1;sM['Ca']=1;}
+    if(s.indexOf('K2')>=0){sM['K2']=1;}
+    if(s.indexOf('KSM')>=0||s.indexOf('醉茄')>=0){SUPP['KSM-66'].forEach(function(x){sM[x]=1;});}
+    if(s.indexOf('牡蛎')>=0||s.indexOf('Oyster')>=0||s.indexOf('GO Healthy')>=0){SUPP['Oyster'].forEach(function(x){sM[x]=1;});}
+  });
+  function cvd(x){return fM[x]||sM[x];}
+
+  // exercise
+  var acts = [];
+  var totalV = 0, totalS = 0;
+  var mSets = {};
+  var isSwim = false;
+  var swimData = {};
+  if(hasE){
+    e.activities.forEach(function(a){
+      if(a.indexOf('游泳')>=0){ isSwim = true; }
+      // extract swim data
+      var sm = a.match(/游泳\s+(\d+)m/);
+      if(sm){ swimData.dist = parseInt(sm[1]); }
+      var sm2 = a.match(/消耗\s+(\d+)kcal/);
+      if(sm2){ swimData.kcal = parseInt(sm2[1]); }
+      var sm3 = a.match(/心率\s+(\d+)avg/);
+      if(sm3){ swimData.hr = parseInt(sm3[1]); }
+      var sm4 = a.match(/(\d+)min(\d+)s/);
+      if(sm4){ swimData.time = (swimData.time||0) + parseInt(sm4[1]) + (parseInt(sm4[2])/60); }
+
+      var m = a.match(/(.+?)\s+(\d+(?:\.\d+)?)kg\s*x\s*(\d+)\s*x\s*(\d+)/);
+      var name, w=0, rep=0, set=0;
+      if(m){
+        name=m[1].trim(); w=parseFloat(m[2]); rep=parseInt(m[3]); set=parseInt(m[4]);
+      } else {
+        var m2 = a.match(/(.+?)\s+自重\s*x\s*(\d+)\s*x\s*(\d+)/);
+        if(m2){name=m2[1].trim();rep=parseInt(m2[2]);set=parseInt(m2[3]);}
+        else { name=a; set=0; } // don't count non-strength lines as sets
+      }
+      if(!name || !set) return;
+      var vol = w*rep*set;
+      totalV += vol; totalS += rep*set;
+      var mg = '其他';
+      var mkeys = Object.keys(MUSCLE);
+      for(var i=0;i<mkeys.length;i++){
+        if(name.indexOf(mkeys[i])>=0){mg=MUSCLE[mkeys[i]];break;}
+      }
+      mSets[mg] = (mSets[mg]||0) + rep*set;
+      acts.push({n:name,w:w,rep:rep,set:set,vol:vol,g:mg});
+    });
+  }
+
+  // dinner recommendation
+  var targetK = 2100, targetP = 120, targetF = 55, targetC = 280;
+  var needK = Math.max(0, targetK - kcal);
+  var needP = Math.max(0, targetP - prot);
+  var needF = Math.max(0, targetF - fat);
+  var needC = Math.max(0, targetC - carb);
+  var dinner = recommendDinner(needK, needP, needF, needC);
+
+  // ---- BUILD ----
+  var html = '';
+
+  // STATS
+  html += '<div class="sr">';
+  var mealCount = (hasB?1:0)+(hasL?1:0)+(hasD?1:0);
+  var stats = [['&#x1f37d;','餐次',mealCount+'/3',mealCount>=2?'var(--gr)':'var(--or)'],
+    ['&#x1f525;','热量',kcal+'kcal','var(--or)'],['&#x1f969;','蛋白质',prot+'g','var(--gr)'],
+    ['&#x1f4aa;',isSwim?'游泳距离':'动作数',isSwim?(swimData.dist?swimData.dist+'m':acts.length+''):acts.length+'','var(--bl)'],
+    ['&#x1f3cb;',isSwim?'运动消耗':'总组次',isSwim?(swimData.kcal?swimData.kcal+'kcal':'-'):totalS+'','var(--pu)'],
+    ['&#x1f4c5;','天数',days.length+'天','var(--bl)']];
+  for(var i=0;i<stats.length;i++){
+    html += '<div class="sc an dl'+(i+1)+'"><div class="i">'+stats[i][0]+'</div><div class="l">'+stats[i][1]+'</div><div class="v" style="color:'+stats[i][3]+'">'+stats[i][2]+'</div></div>';
+  }
+  html += '</div>';
+
+  // MEALS (with macros per item)
+  html += '<div class="sec an dl1"><div class="sh"><h2>&#x1f37d; 饮食记录 '+day+'</h2><span class="bg bgg">'+mealCount+'餐</span></div>';
+  var mh = '';
+  if(hasB){
+    mh += '<div class="mc"><div class="ml">&#x1f305; 早餐</div><ul>';
+    b.items.forEach(function(x,i){
+      var ff = bf.find(function(f){return x.indexOf(f.name)>=0;});
+      if(ff){
+        mh += '<li>'+x+' <span class="mac">('+ff.kcal+'k/'+ff.p+'p/'+ff.f+'f/'+ff.c+'c)</span></li>';
+      } else {
+        mh += '<li>'+x+'</li>';
+      }
+    });
+    var bk = Math.round(bf.reduce(function(s,f){return s+f.kcal;},0));
+    mh += '</ul><div style="font-size:10px;color:var(--t3);margin-top:4px;">约 '+bk+' kcal</div></div>';
+  }
+  if(hasL){
+    mh += '<div class="mc"><div class="ml">&#x1f957; 午餐</div><ul>';
+    l.items.forEach(function(x,i){
+      var ff = lf.find(function(f){return x.indexOf(f.name)>=0;});
+      if(ff){
+        mh += '<li>'+x+' <span class="mac">('+ff.kcal+'k/'+ff.p+'p/'+ff.f+'f/'+ff.c+'c)</span></li>';
+      } else {
+        mh += '<li>'+x+'</li>';
+      }
+    });
+    var lk = Math.round(lf.reduce(function(s,f){return s+f.kcal;},0));
+    mh += '</ul>';
+    // snack (if exists)
+    if(l.snack && l.snack.length){
+      mh += '<div style="font-size:10px;color:var(--t2);margin-top:4px;">&#x1f96a; 加餐：'+l.snack.join('；')+'</div>';
+    }
+    mh += '<div style="font-size:10px;color:var(--t3);margin-top:4px;">约 '+lk+' kcal</div></div>';
+  }
+  if(mh)html += '<div class="mg">'+mh+'</div>';
+  // dinner (if exists)
+  if(hasD){
+    html += '<div style="margin:0 16px 8px;border-top:1px solid var(--bd);padding-top:8px;">';
+    html += '<div style="font-size:11px;color:var(--t2);margin-bottom:4px;">&#x1f31b; 晚餐</div><ul style="list-style:none;">';
+    d.items.forEach(function(x,i){
+      var ff = df.find(function(f){return x.indexOf(f.name)>=0;});
+      if(ff){
+        html += '<li style="font-size:12px;padding:2px 0;">'+x+' <span class="mac">('+ff.kcal+'k/'+ff.p+'p/'+ff.f+'f/'+ff.c+'c)</span></li>';
+      } else {
+        html += '<li style="font-size:12px;padding:2px 0;">'+x+'</li>';
+      }
+    });
+    var dk = Math.round(df.reduce(function(s,f){return s+f.kcal;},0));
+    html += '</ul><div style="font-size:10px;color:var(--t3);">约 '+dk+' kcal</div></div>';
+  }
+  if(sups.length || ns.length){
+    html += '<div class="sl">';
+    sups.forEach(function(s){html+='<span class="sp">'+s+'</span>';});
+    ns.forEach(function(s){html+='<span class="sp" style="background:rgba(188,140,255,.15);border-color:rgba(188,140,255,.3);color:var(--pu)">&#x1f30c; '+s+'</span>';});
+    html += '</div>';
+  }
+  html += '</div>';
+
+  // CALORIE
+  html += '<div class="sec an dl2"><div class="sh"><h2>&#x1f525; 热量估算 & 宏量营养</h2><span class="bg '+ (kcal>=1500?'bgg':kcal>=1200?'bgo':'bgr')+'">'+kcal+' kcal</span></div>';
+  var cx=55,cy=55,r=42,circ=2*Math.PI*r;
+  html += '<div class="dw"><div class="dn"><svg width="110" height="110" viewBox="0 0 110 110">';
+  html += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--cbg)" stroke-width="20"/>';
+  html += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--gr)" stroke-width="20" stroke-dasharray="'+(pP*circ/100)+' '+(circ-pP*circ/100)+'" stroke-dashoffset="0"/>';
+  html += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--or)" stroke-width="20" stroke-dasharray="'+(fP*circ/100)+' '+(circ-fP*circ/100)+'" stroke-dashoffset="'+(-pP*circ/100)+'"/>';
+  html += '<circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="none" stroke="var(--bl)" stroke-width="20" stroke-dasharray="'+(cP*circ/100)+' '+(circ-cP*circ/100)+'" stroke-dashoffset="'+(-(pP+fP)*circ/100)+'"/>';
+  html += '</svg><div class="dc"><div class="dv">'+kcal+'</div><div class="dl">kcal</div></div></div></div>';
+  html += '<div class="leg">';
+  html += '<div class="li"><span class="ld" style="background:var(--gr)"></span>蛋白 '+prot+'g ('+pP+'%)</div>';
+  html += '<div class="li"><span class="ld" style="background:var(--or)"></span>脂肪 '+fat+'g ('+fP+'%)</div>';
+  html += '<div class="li"><span class="ld" style="background:var(--bl)"></span>碳水 '+carb+'g ('+cP+'%)</div>';
+  html += '</div>';
+  var targets = [['蛋白质',prot,120,'g','var(--gr)',prot<80],['脂肪',fat,55,'g','var(--or)',fat<40||fat>80],['碳水',carb,250,'g','var(--bl)',carb<150]];
+  html += '<div class="nb">';
+  for(var i=0;i<targets.length;i++){
+    var pct = Math.min(Math.round(targets[i][1]/targets[i][2]*100),100);
+    html += '<div class="nb-i"><div class="nb-l"><span class="n">'+targets[i][0]+'</span><span class="v">'+targets[i][1]+targets[i][3]+' / '+targets[i][2]+targets[i][3]+'</span></div><div class="nb-b"><div class="nb-f" style="width:'+pct+'%;background:'+targets[i][4]+'"></div></div></div>';
+  }
+  html += '</div></div>';
+
+  // MICRO
+  html += '<div class="sec an dl3"><div class="sh"><h2>&#x1f9ea; 微量营养</h2><span class="bg bgb">补剂 '+allsups.length+'项</span></div><div class="mg2">';
+  var micros = [['蛋白质',prot+'g >=80g',prot>=80],['维A',cvd('A')?'已覆盖':'需关注',cvd('A')],
+    ['维D',cvd('D')?'已覆盖(1000IU)':'需关注',cvd('D')],['维C',cvd('C')?'已覆盖':'需关注',cvd('C')],
+    ['维B族',cvd('B12')?'已覆盖':'需关注',cvd('B12')],['钙',cvd('Ca')?(sups.length>=2?'已覆盖(约260mg)':'已覆盖(偏低)'):'需关注',cvd('Ca')],
+    ['铁',cvd('Fe')?'已覆盖':'需关注',cvd('Fe')],['锌',cvd('Zn')?'已覆盖':'需关注',cvd('Zn')],
+    ['硒',cvd('Se')?'已覆盖':'需关注',cvd('Se')],['镁',cvd('Mg')?'已覆盖':'需关注',cvd('Mg')],
+    ['钾',cvd('K')?'已覆盖':'需关注',cvd('K')],['Omega-3','⚠️ 无磷虾油需额外补充',0],
+    ['辅酶Q10',cvd('辅酶Q10')?'已覆盖(200mg)':'需关注',cvd('辅酶Q10')],['维生素K2',cvd('K2')?'已覆盖':'需关注',cvd('K2')],
+    ['适应原草本(南非醉茄)',allsups.some(function(s){return s.indexOf('KSM')>=0||s.indexOf('醉茄')>=0;})?'已启用':'待启用',allsups.some(function(s){return s.indexOf('KSM')>=0||s.indexOf('醉茄')>=0;})],
+    ['牡蛎精(锌+牛磺酸)',allsups.some(function(s){return s.indexOf('牡蛎')>=0||s.indexOf('Oyster')>=0||s.indexOf('GO Healthy')>=0;})?'已启用':'待启用',allsups.some(function(s){return s.indexOf('牡蛎')>=0||s.indexOf('Oyster')>=0||s.indexOf('GO Healthy')>=0;})]];
+  for(var i=0;i<micros.length;i++){
+    html += '<div class="mc2"><div class="mv">'+(micros[i][2]?'&#x2705;':'&#x26a0;&#xfe0f;')+'</div><div class="ml">'+micros[i][0]+'</div><div class="ms '+(micros[i][2]?'ok':'wn')+'">'+micros[i][1]+'</div></div>';
+  }
+  html += '</div></div>';
+
+  // TRAINING
+  if(hasE){
+    html += '<div class="sec an dl4"><div class="sh"><h2>&#x1f4aa; '+(isSwim?'游泳训练分析':'训练计划分析')+'</h2><span class="bg '+(isSwim?'bgb':'bgb')+'">'+(isSwim?swimData.dist+'m':acts.length+'动作/'+totalS+'组')+'</span></div>';
+    if(isSwim){
+      html += '<div style="padding:4px 16px 8px;font-size:12px;color:var(--t2);">&#x1f3ca; 游泳训练概要</div>';
+      html += '<div class="sr2">';
+      html += '<div class="sri"><div class="sv" style="color:var(--bl)">'+swimData.dist+'m</div><div class="sk">总距离</div></div>';
+      if(swimData.time)html += '<div class="sri"><div class="sv" style="color:var(--or)">'+Math.round(swimData.time)+'min</div><div class="sk">有效时长</div></div>';
+      if(swimData.hr)html += '<div class="sri"><div class="sv" style="color:var(--rd)">'+swimData.hr+'bpm</div><div class="sk">平均心率</div></div>';
+      if(swimData.kcal)html += '<div class="sri"><div class="sv" style="color:var(--or)">'+swimData.kcal+'</div><div class="sk">运动消耗(kcal)</div></div>';
+      html += '</div>';
+      if(e.notes){
+        html += '<div style="padding:0 16px 12px;font-size:11px;color:var(--t3);">'+e.notes+'</div>';
+      }
+    }
+    if(acts.length){
+      html += '<div style="padding:4px 16px;font-size:11px;color:var(--t3);">&#x1f3af; 目标肌群分布</div><div class="mg3">';
+      var mKeys = Object.keys(mSets);
+      for(var i=0;i<mKeys.length;i++){
+        html += '<div class="mc3"><div class="mn">'+mKeys[i]+'</div><div class="ms2">'+mSets[mKeys[i]]+'</div><div class="ml2">组</div></div>';
+      }
+      html += '</div><table class="et"><thead><tr><th>动作</th><th>计划</th><th>负荷(kg)</th></tr></thead><tbody>';
+      for(var i=0;i<acts.length;i++){
+        var a = acts[i];
+        var vc = a.vol>=3000?'vh':a.vol>=1500?'vm':'vl';
+        html += '<tr><td><span style="font-weight:600">'+a.n+'</span>'+(a.g!='其他'?'<br><span class="mus">'+a.g+'</span>':'')+'</td><td>'+(a.w?a.w+'kg':'自重')+' x '+a.rep+' x '+a.set+'</td><td><span class="vc '+vc+'">'+a.vol+'</span></td></tr>';
+      }
+      html += '</tbody></table>';
+      var avgV = Math.round(totalV/acts.length);
+      html += '<div class="sr2"><div class="sri"><div class="sv" style="color:var(--or)">'+totalS+'</div><div class="sk">总组次</div></div><div class="sri"><div class="sv" style="color:var(--bl)">'+avgV+'</div><div class="sk">平均负荷</div></div><div class="sri"><div class="sv" style="color:var(--gr)">'+Math.round(totalV/1000)+'t</div><div class="sk">总训练量</div></div><div class="sri"><div class="sv" style="color:var(--pu)">'+mKeys.length+'</div><div class="sk">肌群数</div></div></div>';
+    }
+    html += '</div>';
+  }
+
+  // TREND
+  // compute averages across all days
+  var sumK=0, sumP=0, sumS=0, sumV=0, trendDays=0;
+  days.forEach(function(d){
+    var rd = recs[d];
+    var bf_d = rd.breakfast && rd.breakfast.items ? matchFood(rd.breakfast.items) : [];
+    var lf_d = rd.lunch && rd.lunch.items ? matchFood(rd.lunch.items) : [];
+    var sf_d = rd.lunch && rd.lunch.snack ? matchFood(rd.lunch.snack) : [];
+    var df_d = rd.dinner && rd.dinner.items ? matchFood(rd.dinner.items) : [];
+    var all_d = bf_d.concat(lf_d).concat(sf_d).concat(df_d);
+    var k=0,p=0,s=0,v=0;
+    all_d.forEach(function(f){k+=f.kcal;p+=f.p;});
+    if(rd.exercise && rd.exercise.activities){
+      rd.exercise.activities.forEach(function(a){
+        var m = a.match(/(.+?)\s+(\d+(?:\.\d+)?)kg\s*x\s*(\d+)\s*x\s*(\d+)/);
+        var rep=0,set=0,w=0;
+        if(m){w=parseFloat(m[2]);rep=parseInt(m[3]);set=parseInt(m[4]);}
+        else{var m2=a.match(/(.+?)\s+自重\s*x\s*(\d+)\s*x\s*(\d+)/);if(m2){rep=parseInt(m2[2]);set=parseInt(m2[3]);}}
+        s += rep*set;
+        v += w*rep*set;
+      });
+    }
+    if(k>0||s>0){sumK+=k;sumP+=p;sumS+=s;sumV+=v;trendDays++;}
+  });
+  var avgK = trendDays?Math.round(sumK/trendDays):0;
+  var avgP = trendDays?Math.round(sumP/trendDays):0;
+  var avgS = trendDays?Math.round(sumS/trendDays):0;
+  var avgV = trendDays?Math.round(sumV/trendDays):0;
+
+  html += '<div class="sec an dl5"><div class="sh"><h2>&#x1f4c8; 趋势分析</h2><span class="bg bgy">'+(trendDays<=1?'数据积累中':'趋势已更新')+'</span></div><div class="trd">';
+  if(trendDays<=1){
+    html += '<div class="trc"><div class="tv" style="color:var(--t2)">-</div><div class="tl">日均热量</div></div><div class="trc"><div class="tv" style="color:var(--t2)">-</div><div class="tl">日均蛋白</div></div><div class="trc"><div class="tv" style="color:var(--t2)">-</div><div class="tl">日均组次</div></div><div class="trc"><div class="tv" style="color:var(--t2)">-</div><div class="tl">日均训练量</div></div>';
+    html += '</div><div style="text-align:center;padding:0 16px 12px;font-size:12px;color:var(--t3);">持续记录后自动生成趋势。</div>';
+  } else {
+    html += '<div class="trc"><div class="tv" style="color:var(--or)">'+avgK+'</div><div class="tl">日均热量(kcal)</div></div><div class="trc"><div class="tv" style="color:var(--gr)">'+avgP+'</div><div class="tl">日均蛋白(g)</div></div><div class="trc"><div class="tv" style="color:var(--bl)">'+avgS+'</div><div class="tl">日均组次</div></div><div class="trc"><div class="tv" style="color:var(--pu)">'+Math.round(avgV/1000)+'t</div><div class="tl">日均训练量</div></div>';
+    html += '</div><div style="text-align:center;padding:0 16px 12px;font-size:11px;color:var(--t3);">基于 '+trendDays+' 天训练日数据。</div>';
+  }
+  html += '</div>';
+
+  // RECOMMENDATIONS
+  html += '<div class="sec an dl6"><div class="sh"><h2>&#x1f4a1; 建议</h2><span class="bg bgo">分析</span></div><div class="tps">';
+
+  // Dinner recommendation
+  html += '<div class="tp diet"><strong>&#x1f372; 晚餐推荐（汝州本地食材，按类别搭配）</strong><br>';
+  html += '今日已摄入 '+kcal+'kcal / '+prot+'g蛋白 / '+fat+'g脂肪 / '+carb+'g碳水<br>';
+  html += '目标约 '+targetK+'kcal / '+targetP+'g蛋白 / '+targetF+'g脂肪 / '+targetC+'g碳水<br>';
+  if(needK>0||needP>0||needC>0){
+    html += '建议晚餐补足：'+(needK>0?needK+'kcal ':'')+(needP>0?needP+'g蛋白 ':'')+(needC>0?needC+'g碳水':'')+'<br><br>';
+    var catNames = {'protein':'&#x1f969; 蛋白质','staple':'&#x1f35e; 主食(碳水)','veg':'&#x1f966; 蔬菜','dairy':'&#x1f95b; 奶类','fat':'&#x1f9c8; 优质脂肪','fruit':'&#x1f34e; 水果'};
+    dinner.items.forEach(function(f){
+      var catL = catNames[f[6]]||'';
+      html += '&nbsp;&nbsp;&#x25cf; '+f[5]+' <span class="mac">'+f[0]+'k/'+f[1]+'p/'+f[2]+'f/'+f[3]+'c'+(f[4]>0?' 纤维'+f[4]+'g':'')+'</span> <span style="font-size:10px;color:var(--t2)">'+catL+'</span><br>';
+    });
+    html += '<br>&#x1f4cd; 以上汝州菜市场/超市均有售。推荐烹饪：鸡胸/鱼清蒸或水煮，配蒸红薯/\u996d和清炒蔬菜。<br>';
+  }
+  html += '<span style="font-size:11px;color:var(--t3);">&#x2139;&#xfe0f; P/F/C 是蛋白质/脂肪/碳水，不包含膳食纤维。纤维已单独标注在菜品后面。建议每日摄入 25-35g 膳食纤维。</span>';
+  html += '</div>';
+
+  var tips = [];
+  if(kcal<1800)tips.push('&#x1f957; 当前热量'+kcal+'kcal，对增肌偏低。');
+  if(prot<100)tips.push('&#x1f969; 蛋白质'+prot+'g，建议达120-150g。');
+  if(carb<180)tips.push('&#x1f35e; 碳水'+carb+'g，训练日推荐200-300g。');
+  if(!cvd('Ca'))tips.push('&#x1f95b; 钙每日~260mg，低于800mg推荐量，建议牛奶/酸奶补钙。');
+  if(!cvd('D'))tips.push('&#x2600;&#xfe0f; 维D 1000IU已覆盖，日晒不足可维持。');
+
+  html += '<div class="tp diet"><strong>&#x1f957; 其他饮食建议</strong><br>'+ (tips.length?tips.join('<br>'):'&#x2705; 整体均衡')+'</div>';
+
+  var ttips = [];
+  if(acts.length){
+    var bVol = (mSets['背阔肌']||0)+(mSets['中上背']||0);
+    if(bVol>40)ttips.push('背部容量'+bVol+'组较高，注意恢复。');
+    if(totalS>30)ttips.push('总组次'+totalS+'中高容量，定期安排减载。');
+    ttips.push('动作顺序合理，保持复合->孤立->核心模式。');
+  }
+  html += '<div class="tp train"><strong>&#x1f4aa; 训练建议</strong><br>'+ (ttips.length?ttips.join('<br>'):'-')+'</div>';
+
+  html += '<div class="tp supp"><strong>&#x1f48a; 补剂建议</strong><br>已覆盖: 复合维(美版)+辅酶Q10(200mg)+K2(50μg)+牡蛎精(锌15mg+牛磺酸)+南非醉茄(皮质醇管理/睡眠)。Ca总量~260mg(复合维210+Q10片50)，VD 1000IU。锌~26mg(复合维11+牡蛎精15)不超UL。<br>⚠️ Omega-3缺口（MegaRed无磷虾油），建议加鱼油/磷虾油。</div>';
+
+  html += '</div></div>';
+
+  html += '<div class="ts">数据来自 fitness-tracker/records.json</div>';
+
+  document.getElementById('app').innerHTML = html;
+}
+
+document.addEventListener('DOMContentLoaded',render);
+</script>
+</div>
+</body>
+</html>
